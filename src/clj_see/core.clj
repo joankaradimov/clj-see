@@ -15,3 +15,17 @@
          (map-indexed prepend-paths)
          flatten-1)
     [()]))
+
+(defn extract-snippet [expression path]
+  (if (empty? path)
+    expression
+    (recur (nth expression (first path)) (rest path))))
+
+(defn replace-snippet [expression path new-snippet]
+  (if (empty? path)
+    new-snippet
+    (map-indexed (fn [index subexpression]
+                   (if (= index (first path))
+                     (replace-snippet subexpression (rest path) new-snippet)
+                     subexpression))
+                 expression)))
