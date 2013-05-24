@@ -43,3 +43,8 @@
         new-expression-1 (replace-snippet expression-1 path-1 snippet-2)
         new-expression-2 (replace-snippet expression-2 path-2 snippet-1)]
     [new-expression-1 new-expression-2]))
+
+(defn mutate [expression path f]
+  (let [snippet (extract-snippet expression path)
+        mutated-snippet (f snippet)]
+    (replace-snippet expression path mutated-snippet)))

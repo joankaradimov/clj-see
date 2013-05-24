@@ -40,3 +40,9 @@
                     '(3 2))
          '[(+ 1 (chiasma-2 123))
            (* 2 3 (+ 1 (chiasma-1 42 (* 1 2)) 3))])))
+
+(deftest test-mutate
+  (is (= (mutate '(+ (* a x x) (* b x) c)
+                 '(1 3)
+                 (fn [_] 'y))
+         '(+ (* a x y) (* b x) c))))
