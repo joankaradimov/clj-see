@@ -48,3 +48,46 @@
   (let [snippet (extract-snippet expression path)
         mutated-snippet (f snippet)]
     (replace-snippet expression path mutated-snippet)))
+
+(defn circle-area [radius]
+  (* radius radius Math/PI))
+
+(defn abs [x]
+  (if (neg? x) (- x) x))
+
+(defn circle-area-fitness [expression]
+  (let [expression-fn (eval `(fn [~'r] ~expression))
+        differences (for [r (range 10)] (abs (- (circle-area r)
+                                                (expression-fn r))))]
+    (- (apply + (map #(* % %) differences)))))
+
+; TODO: This can be a tail recursion
+(defn form-pairs [expressions]
+  (let [first-expression (first expressions)
+        second-expression (second expressions)
+        remaining-expressions (-> expressions rest rest)]
+    (if (and first-expression second-expression)
+      (cons [first-expression second-expression]
+            (form-pairs remaining-expressions)))))
+
+; TODO: fitness can be cached, probably
+(defn take-fittest [expressions fitness-function count]
+  (->> expressions
+       (sort-by fitness-function >)
+       (take count)))
+
+(defn next-generation [expressions elitism-factor]
+  (let [population-count (count expressions)
+        old-expression-count (* elitism-factor population-count)
+        new-expression-count (- population-count old-expression-count)
+        new-expressions (flatten-1 (for [[exp-1 exp-2] (form-pairs expressions)]
+                                     (crossover exp-1
+                                                (random-path exp-1)
+                                                exp-2
+                                                (random-path exp-2))))]
+    (concat (take-fittest expressions
+                          circle-area-fitness
+                          old-expression-count)
+            (take-fittest new-expressions
+                          circle-area-fitness
+                          new-expression-count))))
