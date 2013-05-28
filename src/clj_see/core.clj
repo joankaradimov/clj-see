@@ -1,13 +1,13 @@
 (ns clj-see.core)
 
 (defn prepend-paths [index paths]
-  (for [path paths] (cons index path)))
+  (for [path paths] (conj path index)))
 
 (defn flatten-1 [list]
   (apply concat list))
 
 (defn all-paths [expression]
-  (if (list? expression)
+  (if (seq? expression)
     (->> expression
          rest
          (map all-paths)
@@ -67,8 +67,9 @@
         second-expression (second expressions)
         remaining-expressions (-> expressions rest rest)]
     (if (and first-expression second-expression)
-      (cons [first-expression second-expression]
-            (form-pairs remaining-expressions)))))
+      (conj (form-pairs remaining-expressions)
+            [first-expression second-expression])
+      ())))
 
 ; TODO: fitness can be cached, probably
 (defn take-fittest [expressions fitness-function count]
