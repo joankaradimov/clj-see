@@ -92,3 +92,31 @@
             (take-fittest new-expressions
                           circle-area-fitness
                           new-expression-count))))
+
+(def initial-population `[~Math/PI
+                          ~'r
+                          (+ 0 0)
+                          (* 1 1)
+                          (- 0 0)
+                          ~Math/PI
+                          (+ 0 0)
+                          (* 1 1)
+                          (+ 0 0)
+                          (* 1 1)
+                          ~Math/PI
+                          ~'r
+                          (+ 2 0)
+                          (* 2 1)
+                          (- 1 1)
+                          ~Math/PI
+                          (* 1 0)
+                          (* 1 1)
+                          (* 0 0)
+                          (* 1 1)])
+
+(defn -main []
+  (loop [population initial-population
+         iteration 0]
+    (prn iteration population)
+    (if (< iteration 10)
+      (recur (next-generation population 0.1) (inc iteration)))))
