@@ -1,41 +1,8 @@
-(ns clj-see.core)
-
-(defn prepend-paths [index paths]
-  (for [path paths] (conj path index)))
-
-(defn flatten-1 [list]
-  (apply concat list))
-
-(defn all-paths [expression]
-  (if (seq? expression)
-    (->> expression
-         rest
-         (map all-paths)
-         (map prepend-paths (iterate inc 1))
-         flatten-1
-         (cons ()))
-    [()]))
-
-(defn extract-snippet [expression path]
-  (if (empty? path)
-    expression
-    (recur (nth expression (first path)) (rest path))))
-
-(defn replace-snippet [expression path new-snippet]
-  (let [current-index (first path)
-        remaining-indexes (rest path)
-        replace-flat (fn [index subexpression]
-                       (if (= index current-index)
-                         (replace-snippet subexpression
-                                          remaining-indexes
-                                          new-snippet)
-                         subexpression))]
-    (if (empty? path)
-      new-snippet
-      (map-indexed replace-flat expression))))
+(ns clj-see.core
+  (:require clj-see.util))
 
 (defn random-path [expression]
-  (-> expression all-paths rand-nth))
+  (-> expression clj-see.util/all-paths rand-nth))
 
 (defn crossover
   ([expression-1 expression-2]
@@ -44,19 +11,23 @@
                 expression-2
                 (random-path expression-2)))
   ([expression-1 path-1 expression-2 path-2]
-     (let [snippet-1 (extract-snippet expression-1 path-1)
-           snippet-2 (extract-snippet expression-2 path-2)
-           new-expression-1 (replace-snippet expression-1 path-1 snippet-2)
-           new-expression-2 (replace-snippet expression-2 path-2 snippet-1)]
+     (let [snippet-1 (clj-see.util/extract-snippet expression-1 path-1)
+           snippet-2 (clj-see.util/extract-snippet expression-2 path-2)
+           new-expression-1 (clj-see.util/replace-snippet expression-1
+                                                          path-1
+                                                          snippet-2)
+           new-expression-2 (clj-see.util/replace-snippet expression-2
+                                                          path-2
+                                                          snippet-1)]
        [new-expression-1 new-expression-2])))
 
 (defn mutate
   ([expression f]
      (mutate expression (random-path expression) f))
   ([expression path f]
-     (let [snippet (extract-snippet expression path)
+     (let [snippet (clj-see.util/extract-snippet expression path)
            mutated-snippet (f snippet)]
-       (replace-snippet expression path mutated-snippet))))
+       (clj-see.util/replace-snippet expression path mutated-snippet))))
 
 (defn circle-area [radius]
   (* radius radius Math/PI))
@@ -93,7 +64,7 @@
         new-expressions (->> expressions
                              form-pairs
                              (map #(apply crossover %))
-                             flatten-1)]
+                             clj-see.util/flatten-1)]
     (concat (take-fittest expressions
                           circle-area-fitness
                           old-expression-count)
