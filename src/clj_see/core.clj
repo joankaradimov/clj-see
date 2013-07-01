@@ -1,33 +1,5 @@
 (ns clj-see.core
-  (:require clj-see.util))
-
-(defn random-path [expression]
-  (-> expression clj-see.util/all-paths rand-nth))
-
-(defn crossover
-  ([expression-1 expression-2]
-     (crossover expression-1
-                (random-path expression-1)
-                expression-2
-                (random-path expression-2)))
-  ([expression-1 path-1 expression-2 path-2]
-     (let [snippet-1 (clj-see.util/list-get-in expression-1 path-1)
-           snippet-2 (clj-see.util/list-get-in expression-2 path-2)
-           new-expression-1 (clj-see.util/list-assoc-in expression-1
-                                                        path-1
-                                                        snippet-2)
-           new-expression-2 (clj-see.util/list-assoc-in expression-2
-                                                        path-2
-                                                        snippet-1)]
-       [new-expression-1 new-expression-2])))
-
-(defn mutate
-  ([expression f]
-     (mutate expression (random-path expression) f))
-  ([expression path f]
-     (let [snippet (clj-see.util/list-get-in expression path)
-           mutated-snippet (f snippet)]
-       (clj-see.util/list-assoc-in expression path mutated-snippet))))
+  (:require clj-see.util clj-see.expression))
 
 (defn circle-area [radius]
   (* radius radius Math/PI))
@@ -36,7 +8,7 @@
   (if (neg? x) (- x) x))
 
 (defn circle-area-fitness [expression]
-  (let [expression-fn (eval `(fn [~'r] ~expression))
+  (let [expression-fn (clj-see.expression/expression->fn expression)
         differences (for [r (range 5)] (abs (- (circle-area r)
                                                 (expression-fn r))))]
     (- (apply + (map #(* % %) differences)))))
@@ -63,7 +35,7 @@
         new-expression-count (- population-count old-expression-count)
         new-expressions (->> expressions
                              form-pairs
-                             (map #(apply crossover %))
+                             (map #(apply clj-see.expression/crossover %))
                              clj-see.util/flatten-1)]
     (concat (take-fittest expressions
                           circle-area-fitness
