@@ -18,17 +18,17 @@
   (is (= (all-paths '(+ 42 (something else))) '[() (1) (2) (2 1)]))
   (is (= (all-paths '(+ 42 (* 7 8))) '[() (1) (2) (2 1) (2 2)])))
 
-(deftest test-extract-snippet
-  (is (= (extract-snippet '(* 2 (+ 1 2)) ()) '(* 2 (+ 1 2))))
-  (is (= (extract-snippet '(* 2 (+ 1 2)) '(2)) '(+ 1 2)))
-  (is (= (extract-snippet '(* 2 (inc (inc 42))) '(2 1 1)) '42)))
+(deftest test-list-get-in
+  (is (= (list-get-in '(* 2 (+ 1 2)) ()) '(* 2 (+ 1 2))))
+  (is (= (list-get-in '(* 2 (+ 1 2)) '(2)) '(+ 1 2)))
+  (is (= (list-get-in '(* 2 (inc (inc 42))) '(2 1 1)) '42)))
 
-(deftest test-replace-snippet
-  (is (= (replace-snippet '(* 2 (+ 1 2))
+(deftest test-list-assoc-in
+  (is (= (list-assoc-in '(* 2 (+ 1 2))
                           '()
                           '(inc 42))
          '(inc 42)))
-  (is (= (replace-snippet '(* 2 (+ 1 2))
+  (is (= (list-assoc-in '(* 2 (+ 1 2))
                           '(2 2)
                           '(/ 42 21))
          '(* 2 (+ 1 (/ 42 21))))))

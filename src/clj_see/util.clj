@@ -16,19 +16,19 @@
          (cons ()))
     [()]))
 
-(defn extract-snippet [expression path]
+(defn list-get-in [expression path]
   (if (empty? path)
     expression
     (recur (nth expression (first path)) (rest path))))
 
-(defn replace-snippet [expression path new-snippet]
+(defn list-assoc-in [expression path new-snippet]
   (let [current-index (first path)
         remaining-indexes (rest path)
         replace-flat (fn [index subexpression]
                        (if (= index current-index)
-                         (replace-snippet subexpression
-                                          remaining-indexes
-                                          new-snippet)
+                         (list-assoc-in subexpression
+                                        remaining-indexes
+                                        new-snippet)
                          subexpression))]
     (if (empty? path)
       new-snippet
