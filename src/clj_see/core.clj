@@ -1,17 +1,5 @@
 (ns clj-see.core
-  (:require clj-see.util clj-see.expression))
-
-(defn circle-area [radius]
-  (* radius radius Math/PI))
-
-(defn abs [x]
-  (if (neg? x) (- x) x))
-
-(defn circle-area-fitness [expression]
-  (let [expression-fn (clj-see.expression/expression->fn expression)
-        differences (for [r (range 5)] (abs (- (circle-area r)
-                                                (expression-fn r))))]
-    (- (apply + (map #(* % %) differences)))))
+  (:require clj-see.util clj-see.expression examples.circle-area))
 
 (defn form-pairs [expressions]
   (loop [remaining-exps expressions
@@ -38,10 +26,10 @@
                              (map #(apply clj-see.expression/crossover %))
                              clj-see.util/flatten-1)]
     (concat (take-fittest expressions
-                          circle-area-fitness
+                          examples.circle-area/fitness
                           old-expression-count)
             (take-fittest new-expressions
-                          circle-area-fitness
+                          examples.circle-area/fitness
                           new-expression-count))))
 
 (def initial-population `[~Math/PI
