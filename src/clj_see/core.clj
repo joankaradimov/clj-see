@@ -17,7 +17,7 @@
        (sort-by fitness-function >)
        (take count)))
 
-(defn next-generation [expressions elitism-factor]
+(defn next-generation [expressions fitness-fn elitism-factor]
   (let [population-count (count expressions)
         old-expression-count (* elitism-factor population-count)
         new-expression-count (- population-count old-expression-count)
@@ -25,12 +25,8 @@
                              form-pairs
                              (map #(apply clj-see.expression/crossover %))
                              clj-see.util/flatten-1)]
-    (concat (take-fittest expressions
-                          examples.circle-area/fitness
-                          old-expression-count)
-            (take-fittest new-expressions
-                          examples.circle-area/fitness
-                          new-expression-count))))
+    (concat (take-fittest expressions fitness-fn old-expression-count)
+            (take-fittest new-expressions fitness-fn new-expression-count))))
 
 (def initial-population `[~Math/PI
                           ~'r
@@ -58,4 +54,5 @@
          iteration 0]
     (prn iteration population)
     (if (< iteration 10)
-      (recur (next-generation population 0.1) (inc iteration)))))
+      (recur (next-generation population examples.circle-area/fitness 0.1)
+             (inc iteration)))))
