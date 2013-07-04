@@ -10,8 +10,10 @@
 (defn random-path [program]
   (-> program expression clj-see.util/all-paths rand-nth))
 
-(defn program->fn [program]
-  (eval `(fn [~'r] ~(program :expression))))
+; TODO: use `args` instead of `r`
+(defn invoke [program r]
+  (let [program-fn (eval `(fn [~'r] ~(program :expression)))]
+    (program-fn r)))
 
 (defn crossover [program-1 program-2]
   (map create-program

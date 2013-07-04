@@ -11,7 +11,7 @@
   (* x x))
 
 (defn fitness [program]
-  (let [program-fn (clj-see.program/program->fn program)
-        differences (for [r (range 5)] (abs (- (circle-area r)
-                                               (program-fn r))))]
+  (let [diff-fn #(abs (- (circle-area %)
+                         (clj-see.program/invoke program %)))
+        differences (map diff-fn (range 5))]
     (- (apply + (map sqr differences)))))

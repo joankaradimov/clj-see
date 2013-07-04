@@ -11,3 +11,8 @@
   (testing "Mutate function can be called for programs"
     (is (= (mutate (create-program '(+ a b)) (fn [x] x))
            (create-program '(+ a b))))))
+
+(deftest test-invoke
+  (testing "Programs can be invoked"
+    (is (= (invoke (create-program '(+ 40 r)) 2)
+           42))))
