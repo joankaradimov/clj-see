@@ -1,5 +1,7 @@
 (ns clj-see.program
-  (:require clj-see.util clj-see.expression))
+  (:require clojure.math.numeric-tower
+            clj-see.util
+            clj-see.expression))
 
 (defprotocol AProtocol
   (expression [this])
@@ -37,7 +39,25 @@
                                      (expression program-2)
                                      (random-path program-2))))
 
-(defn mutate [program mutate-fn]
+(def non-terminal-mutations
+  [(fn [_] (rand-nth _))
+   (fn [_] `(+ ~_ 0))
+   (fn [_] `(* ~_ 1))])
+
+(def terminal-mutations
+  [(fn [_] (clojure.math.numeric-tower/expt 2 (/ 1 (rand))))
+   (fn [_] (rand))
+   (fn [_] 'r)
+   (fn [_] `(+ ~_ 0))
+   (fn [_] `(* ~_ 1))])
+
+(defn mutate-fn [expression]
+  (let [mutations (if (list? expression)
+                    non-terminal-mutations
+                    terminal-mutations)]
+    ((rand-nth mutations) expression)))
+
+(defn mutate [program]
   (let [expression (expression program)
         path (random-path program)]
     (-> expression

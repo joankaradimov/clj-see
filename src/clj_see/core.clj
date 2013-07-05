@@ -24,32 +24,13 @@
         new-programs (->> programs
                           form-pairs
                           (map #(apply clj-see.program/crossover %))
-                          clj-see.util/flatten-1)]
+                          clj-see.util/flatten-1
+                          (map clj-see.program/mutate))]
     (concat (take-fittest programs fitness-fn old-program-count)
             (take-fittest new-programs fitness-fn new-program-count))))
 
 (def initial-population (map clj-see.program/create-program
-                             `[~Math/PI
-                               ~'r
-                               (+ 0 0)
-                               (* 1 1)
-                               (- 0 0)
-                               ~Math/PI
-                               (+ 0 0)
-                               (* 1 1)
-                               (+ 0 0)
-                               (* 1 1)
-                               ~Math/PI
-                               ~'r
-                               (+ 2 0)
-                               (* 2 1)
-                               (- 1 1)
-                               ~Math/PI
-                               (* 1 0)
-                               (* 1 1)
-                               (* 0 0)
-                               (* 1 1)]))
-
+                             (repeat 10 0)))
 (defn -main []
   (loop [population initial-population
          iteration 0]
