@@ -53,7 +53,7 @@
 (defn -main []
   (loop [population initial-population
          iteration 0]
-    (prn iteration population)
+    (prn iteration (map clj-see.program/expression population))
     (if (< iteration 10)
       (recur (next-generation population examples.circle-area/fitness 0.1)
              (inc iteration)))))
