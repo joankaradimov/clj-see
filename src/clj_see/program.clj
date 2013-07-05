@@ -41,6 +41,9 @@
 
 (def non-terminal-mutations
   [(fn [_] (rand-nth _))
+   (fn [_] (rand-nth _))
+   (fn [_] (rand-nth _))
+   (fn [_] (rand-nth _))
    (fn [_] `(+ ~_ 0))
    (fn [_] `(* ~_ 1))])
 
