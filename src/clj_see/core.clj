@@ -30,11 +30,12 @@
             (take-fittest new-programs fitness-fn new-program-count))))
 
 (def initial-population (map clj-see.program/create-program
-                             (repeat 10 0)))
+                             (repeat 30 0)))
+
 (defn -main []
   (loop [population initial-population
          iteration 0]
     (prn iteration (map clj-see.program/expression population))
-    (if (< iteration 10)
+    (if (< iteration 80)
       (recur (next-generation population examples.circle-area/fitness 0.1)
              (inc iteration)))))
