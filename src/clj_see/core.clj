@@ -7,8 +7,9 @@
   (loop [population (population/create-population 30)
          iteration 0]
     (if (< iteration 80)
-      (recur (population/next-generation population
-                                         examples.circle-area/fitness
-                                         0.1)
-             (inc iteration))
+      (let [next-gen population/next-generation
+            new-population (next-gen population
+                                     examples.circle-area/fitness
+                                     0.1)]
+        (recur new-population (inc iteration)))
       (-> population population/serialize print))))
