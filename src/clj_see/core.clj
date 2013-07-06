@@ -11,4 +11,4 @@
                                          examples.circle-area/fitness
                                          0.1)
              (inc iteration))
-      (prn iteration (map program/expression population)))))
+      (-> population population/serialize print))))
