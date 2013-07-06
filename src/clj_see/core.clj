@@ -1,5 +1,7 @@
 (ns clj-see.core
-  (:require clj-see.util clj-see.program examples.circle-area))
+  (:require [clj-see.util :as util]
+            [clj-see.program :as program]
+            [examples.circle-area]))
 
 (defn form-pairs [programs]
   (loop [remaining-exps programs
@@ -23,13 +25,13 @@
         new-program-count (- population-count old-program-count)
         new-programs (->> programs
                           form-pairs
-                          (map #(apply clj-see.program/crossover %))
-                          clj-see.util/flatten-1
-                          (map clj-see.program/mutate))]
+                          (map #(apply program/crossover %))
+                          util/flatten-1
+                          (map program/mutate))]
     (concat (take-fittest programs fitness-fn old-program-count)
             (take-fittest new-programs fitness-fn new-program-count))))
 
-(def initial-population (map clj-see.program/create-program
+(def initial-population (map program/create-program
                              (repeat 30 0)))
 
 (defn -main []
@@ -38,4 +40,4 @@
     (if (< iteration 80)
       (recur (next-generation population examples.circle-area/fitness 0.1)
              (inc iteration))
-      (prn iteration (map clj-see.program/expression population)))))
+      (prn iteration (map program/expression population)))))

@@ -1,7 +1,7 @@
 (ns clj-see.program
-  (:require clojure.math.numeric-tower
-            clj-see.util
-            clj-see.expression))
+  (:require [clojure.math.numeric-tower :refer [expt]]
+            [clj-see.util :as util]
+            [clj-see.expression :as expression]))
 
 (defprotocol AProtocol
   (expression [this])
@@ -17,7 +17,7 @@
 
   (random-path [this]
     (if (nil? all-paths)
-      (set! all-paths (clj-see.util/all-paths expression)))
+      (set! all-paths (util/all-paths expression)))
     (rand-nth all-paths))
 
   ; TODO: use `args` instead of `r`
@@ -34,10 +34,10 @@
 
 (defn crossover [program-1 program-2]
   (map create-program
-       (clj-see.expression/crossover (expression program-1)
-                                     (random-path program-1)
-                                     (expression program-2)
-                                     (random-path program-2))))
+       (expression/crossover (expression program-1)
+                             (random-path program-1)
+                             (expression program-2)
+                             (random-path program-2))))
 
 (def non-terminal-mutations
   [(fn [_] (rand-nth _))
@@ -48,7 +48,7 @@
    (fn [_] `(* ~_ 1))])
 
 (def terminal-mutations
-  [(fn [_] (clojure.math.numeric-tower/expt 2 (/ 1 (rand))))
+  [(fn [_] (expt 2 (/ 1 (rand))))
    (fn [_] (rand))
    (fn [_] 'r)
    (fn [_] `(+ ~_ 0))
@@ -64,5 +64,5 @@
   (let [expression (expression program)
         path (random-path program)]
     (-> expression
-        (clj-see.expression/mutate path mutate-fn)
+        (expression/mutate path mutate-fn)
         create-program)))
