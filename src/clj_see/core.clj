@@ -4,7 +4,7 @@
             [examples.circle-area]))
 
 (defn -main []
-  (loop [population population/initial-population
+  (loop [population (population/create-population 30)
          iteration 0]
     (if (< iteration 80)
       (recur (population/next-generation population

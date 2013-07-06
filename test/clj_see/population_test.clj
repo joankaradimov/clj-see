@@ -1,6 +1,12 @@
 (ns clj-see.population-test
   (:require [clojure.test :refer :all]
-            [clj-see.population :refer :all]))
+            [clj-see.population :refer :all]
+            [clj-see.program :as program]))
+
+(deftest test-create-population
+  (testing "New populations can be created"
+    (is (= (create-population 2)
+           [(program/create-program 0) (program/create-program 0)]))))
 
 (deftest test-form-pairs
   (testing "Split population into pairs"
