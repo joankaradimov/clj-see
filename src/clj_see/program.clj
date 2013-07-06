@@ -3,15 +3,14 @@
             [clj-see.util :as util]
             [clj-see.expression :as expression]))
 
-(defprotocol AProtocol
+(defprotocol IProgram
   (expression [this])
-  (random-path [this])
-  (invoke [this r]))
+  (random-path [this]))
 
 (deftype Program [expression
                   ^:unsynchronized-mutable all-paths
                   ^:unsynchronized-mutable func]
-  AProtocol
+  IProgram
 
   (expression [this] expression)
 
@@ -20,11 +19,14 @@
       (set! all-paths (util/all-paths expression)))
     (rand-nth all-paths))
 
-  ; TODO: use `args` instead of `r`
-  (invoke [this r]
+  clojure.lang.IFn
+
+  (invoke [this r] ; TODO: use `& args` instead of `r`
     (if (nil? func)
       (set! func (eval `(fn [~'r] ~expression))))
     (func r))
+
+  ; TODO: implement applyTo
 
   (equals [this other]
     (= expression (. other expression))))
