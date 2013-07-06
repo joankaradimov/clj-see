@@ -25,3 +25,8 @@
   (testing "Keeps only part of the population"
     (is (= (take-fittest [1 1 1 1] identity 2)
            [1 1]))))
+
+(deftest test-serialization
+  (testing "Serializing and deserializing preserves a population"
+    (is (= (-> 10 create-population serialize deserialize)
+           (-> 10 create-population)))))

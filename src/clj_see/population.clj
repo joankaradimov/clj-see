@@ -1,5 +1,6 @@
 (ns clj-see.population
-  (:require [clj-see.util :as util]
+  (:require [clojure.pprint :refer [pprint]]
+            [clj-see.util :as util]
             [clj-see.program :as program]))
 
 (defn create-population [size]
@@ -33,3 +34,15 @@
                           (map program/mutate))]
     (concat (take-fittest population fitness-fn old-program-count)
             (take-fittest new-programs fitness-fn new-program-count))))
+
+(defn serialize [population]
+  (->> population
+       (mapv program/expression)
+       pprint
+       with-out-str))
+
+(defn deserialize [population-string]
+  (->> population-string
+       read-string
+       eval
+       (map program/create-program)))
