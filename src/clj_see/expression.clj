@@ -12,7 +12,7 @@
                                              snippet-1)]
     [new-expression-1 new-expression-2]))
 
-(defn mutate [expression path f]
+(defn mutate [expression path mutate-fn]
   (let [snippet (util/list-get-in expression path)
-        mutated-snippet (f snippet)]
+        mutated-snippet (mutate-fn snippet)]
     (util/list-assoc-in expression path mutated-snippet)))

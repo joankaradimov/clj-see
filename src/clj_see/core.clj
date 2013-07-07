@@ -31,6 +31,7 @@
       (let [next-gen population/next-generation
             new-population (next-gen population
                                      examples.circle-area/fitness
+                                     examples.circle-area/mutate-fn
                                      0.1)]
         (dump-population population-filename new-population)
         (recur new-population (inc iteration)))

@@ -1,6 +1,5 @@
 (ns clj-see.program
-  (:require [clojure.math.numeric-tower :refer [expt]]
-            [clj-see.util :as util]
+  (:require [clj-see.util :as util]
             [clj-see.expression :as expression]))
 
 (defprotocol IProgram
@@ -44,35 +43,7 @@
                              (expression program-2)
                              (random-path program-2))))
 
-(defmacro sum-args [x y] '(apply + args))
-
-(def non-terminal-mutations
-  [(fn [_] (rand-nth (rest _)))
-   (fn [_] (rand-nth (rest _)))
-   (fn [_] `(~(first _) 0 0))
-   (fn [_] `(+ ~_ 0))
-   (fn [_] `(* ~_ 1))])
-
-(def terminal-mutations
-  [(fn [_] (expt 2 (/ 1 (rand))))
-   (fn [_] (expt 2 (/ 1 (rand))))
-   (fn [_] (expt 2 (/ 1 (rand))))
-   (fn [_] (expt 2 (/ 1 (rand))))
-   (fn [_] (rand))
-   (fn [_] (rand))
-   (fn [_] (rand))
-   (fn [_] (rand))
-   (fn [_] `(sum-args 0 0))
-   (fn [_] `(+ ~_ 0))
-   (fn [_] `(* ~_ 1))])
-
-(defn mutate-fn [expression]
-  (let [mutations (if (seq? expression)
-                    non-terminal-mutations
-                    terminal-mutations)]
-    ((rand-nth mutations) expression)))
-
-(defn mutate [program]
+(defn mutate [program mutate-fn]
   (let [expression (expression program)
         path (random-path program)]
     (-> expression

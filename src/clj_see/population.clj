@@ -23,7 +23,7 @@
        (sort-by fitness-function >)
        (take count)))
 
-(defn next-generation [population fitness-fn elitism-factor]
+(defn next-generation [population fitness-fn mutate-fn elitism-factor]
   (let [population-count (count population)
         old-program-count (* elitism-factor population-count)
         new-program-count (- population-count old-program-count)
@@ -31,7 +31,7 @@
                           form-pairs
                           (map #(apply program/crossover %))
                           util/flatten-1
-                          (map program/mutate))]
+                          (map #(program/mutate % mutate-fn)))]
     (concat (take-fittest population fitness-fn old-program-count)
             (take-fittest new-programs fitness-fn new-program-count))))
 

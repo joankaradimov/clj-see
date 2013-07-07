@@ -9,7 +9,7 @@
 
 (deftest test-mutate
   (testing "Mutate function can be called for programs"
-    (mutate (create-program '(+ a b)))))
+    (mutate (create-program '(+ a b)) identity)))
 
 (deftest test-invoke
   (testing "Programs can be invoked"
