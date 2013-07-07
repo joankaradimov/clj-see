@@ -21,10 +21,16 @@
 
   clojure.lang.IFn
 
-  (invoke [this r] ; TODO: use `& args` instead of `r`
+  ;; [this & args] does not work. For more info on varargs and protocols:
+  ;; http://dev.clojure.org/jira/browse/CLJ-1024
+  (invoke [this a1]
     (if (nil? func)
-      (set! func (eval `(fn [~'r] ~expression))))
-    (func r))
+      (set! func (eval `(fn [& ~'args] ~expression))))
+    (func a1))
+  (invoke [this a1 a2]
+    (if (nil? func)
+      (set! func (eval `(fn [& ~'args] ~expression))))
+    (func a1 a2))
 
   ; TODO: implement applyTo
 
@@ -41,6 +47,8 @@
                              (expression program-2)
                              (random-path program-2))))
 
+(defmacro sum-args [x y] '(apply + args))
+
 (def non-terminal-mutations
   [(fn [_] (rand-nth (rest _)))
    (fn [_] (rand-nth (rest _)))
@@ -50,7 +58,7 @@
 (def terminal-mutations
   [(fn [_] (expt 2 (/ 1 (rand))))
    (fn [_] (rand))
-   (fn [_] 'r)
+   (fn [_] `(sum-args 0 0))
    (fn [_] `(+ ~_ 0))
    (fn [_] `(* ~_ 1))])
 

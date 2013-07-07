@@ -13,5 +13,5 @@
 
 (deftest test-invoke
   (testing "Programs can be invoked"
-    (is (= ((create-program '(+ 40 r)) 2)
+    (is (= ((create-program '(+ (first args) (second args))) 40 2)
            42))))
