@@ -44,5 +44,4 @@
 (defn deserialize [population-string]
   (->> population-string
        read-string
-       eval
        (map program/create-program)))

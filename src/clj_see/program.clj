@@ -42,10 +42,8 @@
                              (random-path program-2))))
 
 (def non-terminal-mutations
-  [(fn [_] (rand-nth _))
-   (fn [_] (rand-nth _))
-   (fn [_] (rand-nth _))
-   (fn [_] (rand-nth _))
+  [(fn [_] (rand-nth (rest _)))
+   (fn [_] (rand-nth (rest _)))
    (fn [_] `(+ ~_ 0))
    (fn [_] `(* ~_ 1))])
 
@@ -57,7 +55,7 @@
    (fn [_] `(* ~_ 1))])
 
 (defn mutate-fn [expression]
-  (let [mutations (if (list? expression)
+  (let [mutations (if (seq? expression)
                     non-terminal-mutations
                     terminal-mutations)]
     ((rand-nth mutations) expression)))
