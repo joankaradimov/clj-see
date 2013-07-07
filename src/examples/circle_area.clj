@@ -1,5 +1,4 @@
-(ns examples.circle-area
-  (:require clj-see.program))
+(ns examples.circle-area)
 
 (defn circle-area [radius]
   (* radius radius Math/PI))
