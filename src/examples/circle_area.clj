@@ -10,7 +10,6 @@
   (* x x))
 
 (defn fitness [program]
-  (let [diff-fn #(abs (- (circle-area %)
-                         (program %)))
+  (let [diff-fn #(abs (- (circle-area %) (program %)))
         differences (map diff-fn (range 5))]
     (- (apply + (map sqr differences)))))
