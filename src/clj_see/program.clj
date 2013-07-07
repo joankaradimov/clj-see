@@ -23,16 +23,13 @@
 
   ;; [this & args] does not work. For more info on varargs and protocols:
   ;; http://dev.clojure.org/jira/browse/CLJ-1024
-  (invoke [this a1]
-    (if (nil? func)
-      (set! func (eval `(fn [& ~'args] ~expression))))
-    (func a1))
-  (invoke [this a1 a2]
-    (if (nil? func)
-      (set! func (eval `(fn [& ~'args] ~expression))))
-    (func a1 a2))
+  (invoke [this a1]    (apply this [a1]))
+  (invoke [this a1 a2] (apply this [a1 a2]))
 
-  ; TODO: implement applyTo
+  (applyTo [this args]
+    (if (nil? func)
+      (set! func (eval `(fn [& ~'args] ~expression))))
+    (apply func args))
 
   (equals [this other]
     (= expression (. other expression))))
