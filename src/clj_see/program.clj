@@ -57,6 +57,12 @@
 
 (def terminal-mutations
   [(fn [_] (expt 2 (/ 1 (rand))))
+   (fn [_] (expt 2 (/ 1 (rand))))
+   (fn [_] (expt 2 (/ 1 (rand))))
+   (fn [_] (expt 2 (/ 1 (rand))))
+   (fn [_] (rand))
+   (fn [_] (rand))
+   (fn [_] (rand))
    (fn [_] (rand))
    (fn [_] `(sum-args 0 0))
    (fn [_] `(+ ~_ 0))
