@@ -1,5 +1,5 @@
 (ns clj-see.population
-  (:require [clojure.pprint :refer [pprint]]
+  (:require [clojure.pprint :as pprint]
             [clj-see.util :as util]
             [clj-see.program :as program]))
 
@@ -35,11 +35,10 @@
     (concat (take-fittest population fitness-fn old-program-count)
             (take-fittest new-programs fitness-fn new-program-count))))
 
-(defn serialize [population]
+(defn pprint [population]
   (->> population
        (mapv program/expression)
-       pprint
-       with-out-str))
+       pprint/pprint))
 
 (defn deserialize [population-string]
   (->> population-string

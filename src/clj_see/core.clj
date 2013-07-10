@@ -1,5 +1,7 @@
 (ns clj-see.core
-  (:require [clj-see.population :as population]
+  (:require [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint]]
+            [clj-see.population :as population]
             [clj-see.program :as program]
             [examples.circle-area]))
 
@@ -11,9 +13,8 @@
       population/deserialize))
 
 (defn dump-population [filename population]
-  (->> population
-       population/serialize
-       (spit filename)))
+  (with-open [w (io/writer filename)]
+    (pprint (mapv program/expression population) w)))
 
 (defn load-or-create-population [filename]
   (try
@@ -35,4 +36,4 @@
                                      0.1)]
         (dump-population population-filename new-population)
         (recur new-population (inc iteration)))
-      (-> population population/serialize print))))
+      (population/pprint population))))
