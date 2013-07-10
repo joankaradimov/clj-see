@@ -5,7 +5,10 @@
             [clj-see.program :as program]
             [examples.circle-area]))
 
-(def population-filename "circle-area.txt")
+(def filename "circle-area.txt")
+
+(defn create-persisting-agent [index]
+  (agent index))
 
 (defn load-population [filename]
   (-> filename
@@ -15,6 +18,12 @@
 (defn dump-population [filename population]
   (with-open [w (io/writer filename)]
     (pprint (mapv program/expression population) w)))
+
+(defn dump-population-async [persisting-agent filename population]
+  (letfn [(dump [index]
+            (dump-population filename population)
+            (inc index))]
+    (send-off persisting-agent dump)))
 
 (defn load-or-create-population [filename]
   (try
@@ -26,14 +35,16 @@
       (population/create-population 30))))
 
 (defn -main []
-  (loop [population (load-or-create-population population-filename)
-         iteration 0]
-    (if (< iteration 80)
-      (let [next-gen population/next-generation
-            new-population (next-gen population
-                                     examples.circle-area/fitness
-                                     examples.circle-area/mutate-fn
-                                     0.1)]
-        (dump-population population-filename new-population)
-        (recur new-population (inc iteration)))
-      (population/pprint population))))
+  (let [next-gen population/next-generation
+        initial-population (load-or-create-population filename)
+        persisting-agent (create-persisting-agent 0)]
+    (loop [population initial-population
+           iteration 0]
+      (if (< iteration 80)
+        (let [new-population (next-gen population
+                                       examples.circle-area/fitness
+                                       examples.circle-area/mutate-fn
+                                       0.1)]
+          (dump-population-async persisting-agent filename new-population)
+          (recur new-population (inc iteration)))
+        (population/pprint population)))))
