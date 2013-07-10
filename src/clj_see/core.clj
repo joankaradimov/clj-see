@@ -21,7 +21,11 @@
 
 (defn dump-population-async [persisting-agent filename population]
   (letfn [(dump [index]
-            (dump-population filename population)
+            (if (< (.getQueueCount persisting-agent) 3)
+              ;; In certain scenarios the generation of new populations can
+              ;; overwhelm the dumping of the old ones. This can be avoided
+              ;; by skipping the dumping of some populations.
+              (dump-population filename population))
             (inc index))]
     (send-off persisting-agent dump)))
 
