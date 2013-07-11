@@ -36,7 +36,7 @@
       population)
     (catch Exception e
       (println "Created a new population")
-      (population/create-population 30))))
+      (population/create-population 100))))
 
 (defn -main []
   (let [next-gen population/next-generation
@@ -44,7 +44,7 @@
         persisting-agent (create-persisting-agent 0)]
     (loop [population initial-population
            iteration 0]
-      (if (< iteration 80)
+      (if (< iteration 120)
         (let [new-population (next-gen population
                                        examples.circle-area/fitness
                                        examples.circle-area/mutate-fn
