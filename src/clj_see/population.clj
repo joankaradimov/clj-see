@@ -31,6 +31,7 @@
         old-program-count (* elitism-factor population-count)
         new-program-count (- population-count old-program-count)
         new-programs (->> population
+                          shuffle
                           form-pairs
                           (pmap #(apply program/crossover %))
                           util/flatten-1
