@@ -20,7 +20,9 @@
 ; TODO: fitness can be cached, probably
 (defn take-fittest [population fitness-function count]
   (->> population
-       (sort-by fitness-function >)
+       (pmap (fn [p] [(fitness-function p) p]))
+       (sort-by first >)
+       (pmap second)
        (take count)))
 
 (defn next-generation [population fitness-fn mutate-fn elitism-factor]
@@ -29,11 +31,16 @@
         new-program-count (- population-count old-program-count)
         new-programs (->> population
                           form-pairs
-                          (map #(apply program/crossover %))
+                          (pmap #(apply program/crossover %))
                           util/flatten-1
-                          (map #(program/mutate % mutate-fn)))]
-    (concat (take-fittest population fitness-fn old-program-count)
-            (take-fittest new-programs fitness-fn new-program-count))))
+                          (pmap #(program/mutate % mutate-fn)))
+        fittest-old-programs (take-fittest population
+                                           fitness-fn
+                                           old-program-count)
+        fittest-new-programs (take-fittest new-programs
+                                           fitness-fn
+                                           new-program-count)]
+    (concat fittest-old-programs fittest-new-programs)))
 
 (defn pprint [population]
   (->> population
