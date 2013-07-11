@@ -1,5 +1,6 @@
 (ns clj-see.population
-  (:require [clojure.pprint :as pprint]
+  (:require [clojure.java.io :as io]
+            [clojure.pprint :as pprint]
             [clj-see.util :as util]
             [clj-see.program :as program]))
 
@@ -47,7 +48,34 @@
        (mapv program/expression)
        pprint/pprint))
 
-(defn deserialize [population-string]
-  (->> population-string
+(defn load-population [filename]
+  (->> filename
+       slurp
        read-string
        (map program/create-program)))
+
+(defn load-or-create [filename size]
+  (try
+    (let [population (load-population filename)]
+      (println "Loaded population from file")
+      population)
+    (catch Exception e
+      (println "Created a new population")
+      (create-population size))))
+
+(defn dump-population [filename population]
+  (with-open [w (io/writer filename)]
+    (pprint/pprint (mapv program/expression population) w)))
+
+(defn create-persisting-agent [index]
+  (agent index))
+
+(defn dump-async [persisting-agent filename population]
+  (letfn [(dump [index]
+            (if (< (.getQueueCount persisting-agent) 3)
+              ;; In certain scenarios the generation of new populations can
+              ;; overwhelm the dumping of the old ones. This can be avoided
+              ;; by skipping the dumping of some populations.
+              (dump-population filename population))
+            (inc index))]
+    (send-off persisting-agent dump)))
