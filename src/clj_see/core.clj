@@ -17,4 +17,6 @@
                                        0.1)]
           (population/dump-async persisting-agent filename new-population)
           (recur new-population (inc iteration)))
-        (population/pprint population)))))
+        (do
+          (population/pprint population)
+          (shutdown-agents))))))
