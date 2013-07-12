@@ -6,20 +6,18 @@
 
 (defn -main []
   (let [next-gen population/next-generation
-        [initial-population initial-iteration] (population/load-or-create filename-prefix 100)
+        initial-population (population/load-or-create filename-prefix 100)
         persisting-agent (population/create-persisting-agent 0)]
-    (loop [population initial-population
-           iteration initial-iteration]
-      (if (< iteration 120)
+    (loop [population initial-population]
+      (if (< (population :iteration) 120)
         (let [new-population (next-gen population
                                        examples.circle-area/fitness
                                        examples.circle-area/mutate-fn
                                        0.1)]
           (population/dump-async persisting-agent
                                  filename-prefix
-                                 new-population
-                                 (inc iteration))
-          (recur new-population (inc iteration)))
+                                 new-population)
+          (recur new-population))
         (do
           (population/pprint population)
           (shutdown-agents))))))
