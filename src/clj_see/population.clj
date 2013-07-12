@@ -44,10 +44,11 @@
                                            new-program-count)]
     (concat fittest-old-programs fittest-new-programs)))
 
-(defn pprint [population]
-  (->> population
-       (mapv program/expression)
-       pprint/pprint))
+(defn pprint
+  ([population]
+     (pprint population *out*))
+  ([population writer]
+     (pprint/pprint (mapv program/expression population) writer)))
 
 (defn load-population [filename]
   (->> filename
@@ -66,7 +67,7 @@
 
 (defn dump-population [filename population]
   (with-open [w (io/writer filename)]
-    (pprint/pprint (mapv program/expression population) w)))
+    (pprint population w)))
 
 (defn create-persisting-agent [index]
   (agent index))
