@@ -50,34 +50,56 @@
   ([population writer]
      (pprint/pprint (mapv program/expression population) writer)))
 
-(defn load-population [filename]
-  (->> filename
-       slurp
-       read-string
-       (map program/create-program)))
+(defn load-population [filename-prefix]
+  (let [pattern (->> [filename-prefix '- "([0-9]+)" '.txt]
+                     (apply str)
+                     re-pattern)
+        get-info #(let [[filename i] (re-matches pattern (.getName %))]
+                    {:file %
+                     :matched-filename filename
+                     :matched-iteration (if (nil? i) nil (read-string i))})
+        files-info (->> "."
+                        clojure.java.io/file
+                        file-seq
+                        (map get-info)
+                        (filter :matched-filename)
+                        (sort-by :matched-iteration))
+        last-iteration (-> files-info
+                           last
+                           :matched-iteration) ; TODO: resole NPE
+        last-filename (-> files-info
+                           last
+                           :file ; TODO: resole NPE
+                           .getAbsolutePath)
+        last-population (->> last-filename
+                             slurp
+                             read-string
+                             (map program/create-program))]
+    [last-population last-iteration]))
 
-(defn load-or-create [filename size]
+(defn load-or-create [filename-prefix size]
   (try
-    (let [population (load-population filename)]
-      (println "Loaded population from file")
-      population)
+    (let [[population iteration] (load-population filename-prefix)]
+      (println "Loaded population from file (iteration" iteration ")")
+      [population iteration])
     (catch Exception e
       (println "Created a new population")
-      (create-population size))))
+      [(create-population size) 0])))
 
-(defn dump-population [filename population]
-  (with-open [w (io/writer filename)]
-    (pprint population w)))
+(defn dump-population [filename-prefix population iteration]
+  (let [filename (str filename-prefix '- iteration '.txt)]
+    (with-open [w (io/writer filename)]
+      (pprint population w))))
 
 (defn create-persisting-agent [index]
   (agent index))
 
-(defn dump-async [persisting-agent filename population]
+(defn dump-async [persisting-agent filename-prefix population iteration]
   (letfn [(dump [index]
             (if (< (.getQueueCount persisting-agent) 3)
               ;; In certain scenarios the generation of new populations can
               ;; overwhelm the dumping of the old ones. This can be avoided
               ;; by skipping the dumping of some populations.
-              (dump-population filename population))
+              (dump-population filename-prefix population iteration))
             (inc index))]
     (send-off persisting-agent dump)))
