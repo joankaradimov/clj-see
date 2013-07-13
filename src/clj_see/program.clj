@@ -22,8 +22,14 @@
 
   ;; [this & args] does not work. For more info on varargs and protocols:
   ;; http://dev.clojure.org/jira/browse/CLJ-1024
-  (invoke [this a1]    (apply this [a1]))
-  (invoke [this a1 a2] (apply this [a1 a2]))
+  ;; Implementing `invoke` with up to 6 arguments should be enough
+  (invoke [this]                   (apply this []))
+  (invoke [this a1]                (apply this [a1]))
+  (invoke [this a1 a2]             (apply this [a1 a2]))
+  (invoke [this a1 a2 a3]          (apply this [a1 a2 a3]))
+  (invoke [this a1 a2 a3 a4]       (apply this [a1 a2 a3 a4]))
+  (invoke [this a1 a2 a3 a4 a5]    (apply this [a1 a2 a3 a4 a5]))
+  (invoke [this a1 a2 a3 a4 a5 a6] (apply this [a1 a2 a3 a4 a5 a6]))
 
   (applyTo [this args]
     (if (nil? func)
