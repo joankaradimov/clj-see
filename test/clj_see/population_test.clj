@@ -1,5 +1,6 @@
 (ns clj-see.population-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.java.io :as io]
+            [clojure.test :refer :all]
             [clj-see.population :refer :all]
             [clj-see.program :as program]))
 
@@ -39,6 +40,18 @@
     (is (= "prefix-([0-9]+).txt" (-> "prefix"
                                     create-population-filename-pattern
                                     str)))))
+
+(deftest test-file->file-info
+  (testing "File info contains valid data when file path is matched"
+    (let [file (io/file "/some/filepath/prefix-10.txt")]
+      (is (= (file->file-info file "prefix")
+             {:absolute-path (.getAbsolutePath file)
+              :matched-filename "prefix-10.txt"
+              :matched-iteration 10}))
+      (is (= (file->file-info file "another-prefix")
+             {:absolute-path (.getAbsolutePath file)
+              :matched-filename nil
+              :matched-iteration nil})))))
 
 ;(deftest test-serialization
 ;  (testing "Serializing and deserializing preserves a population"

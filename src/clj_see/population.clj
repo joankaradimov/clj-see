@@ -6,21 +6,22 @@
 
 (defn create-population
   ([size]
-     (create-population (map program/create-program (repeat size 0)) 0))
+     (create-population (->> 0 (repeat size) (map program/create-program)) 0))
   ([programs iteration]
      {:programs programs
       :size (count programs)
       :iteration iteration}))
 
-(defn form-pairs [programs]
-  (loop [remaining-exps programs
-         accumulator ()]
-    (let [first-exp (first remaining-exps)
-          second-exp (second remaining-exps)]
-      (if (and first-exp second-exp)
-        (recur (-> remaining-exps rest rest)
-               (conj accumulator [first-exp second-exp]))
-        (reverse accumulator)))))
+(defn form-pairs
+  ([programs]
+     (form-pairs programs ()))
+  ([programs result-accumulator]
+     (let [first-program (first programs)
+           second-program (second programs)]
+       (if (and first-program second-program)
+         (recur (-> programs rest rest)
+                (conj result-accumulator [first-program second-program]))
+         (reverse result-accumulator)))))
 
 ; TODO: fitness can be cached, probably
 (defn take-fittest [programs fitness-function count]
@@ -58,26 +59,25 @@
        (apply str)
        re-pattern))
 
+(defn file->file-info [file filename-prefix]
+  (let [filename-pattern (create-population-filename-pattern filename-prefix)
+        filename (.getName file)
+        [matched-filename matched-i] (re-matches filename-pattern filename)]
+    {:absolute-path (.getAbsolutePath file)
+     :matched-filename matched-filename
+     :matched-iteration (if (nil? matched-i) nil (read-string matched-i))}))
+
 (defn load-population [filename-prefix]
-  (let [pattern (create-population-filename-pattern filename-prefix)
-        get-info #(let [[filename i] (re-matches pattern (.getName %))]
-                    {:file %
-                     :matched-filename filename
-                     :matched-iteration (if (nil? i) nil (read-string i))})
-        files-info (->> "."
-                        clojure.java.io/file
-                        file-seq
-                        (map get-info)
-                        (filter :matched-filename)
-                        (sort-by :matched-iteration))
-        last-iteration (-> files-info
-                           last
-                           :matched-iteration) ; TODO: resole NPE
-        last-filename (-> files-info
-                          last
-                          :file ; TODO: resole NPE
-                          .getAbsolutePath)
-        last-population (->> last-filename
+  (let [last-file-info (->> "."
+                            clojure.java.io/file
+                            file-seq
+                            (map #(file->file-info % filename-prefix))
+                            (filter :matched-filename)
+                            (sort-by :matched-iteration)
+                            last)
+        last-iteration (last-file-info :matched-iteration) ; TODO: resolve NPE
+        last-population (->> last-file-info
+                             :absolute-path ; TODO: resolve NPE
                              slurp
                              read-string
                              (map program/create-program))]
