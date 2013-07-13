@@ -73,8 +73,7 @@
                             file-seq
                             (map #(file->file-info % filename-prefix))
                             (filter :matched-filename)
-                            (sort-by :matched-iteration)
-                            last)
+                            (apply max-key :matched-iteration))
         last-iteration (last-file-info :matched-iteration) ; TODO: resolve NPE
         last-population (->> last-file-info
                              :absolute-path ; TODO: resolve NPE
