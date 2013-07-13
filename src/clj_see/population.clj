@@ -4,10 +4,13 @@
             [clj-see.util :as util]
             [clj-see.program :as program]))
 
-(defn create-population [size]
-  {:programs (map program/create-program (repeat size 0))
-   :size size
-   :iteration 0})
+(defn create-population
+  ([size]
+     (create-population (map program/create-program (repeat size 0)) 0))
+  ([programs iteration]
+     {:programs programs
+      :size (count programs)
+      :iteration iteration}))
 
 (defn form-pairs [programs]
   (loop [remaining-exps programs
@@ -39,15 +42,10 @@
                           (pmap #(apply program/crossover %))
                           util/flatten-1
                           (pmap #(program/mutate % mutate-fn)))
-        fittest-old-programs (take-fittest old-programs
-                                           fitness-fn
-                                           old-program-size)
-        fittest-new-programs (take-fittest new-programs
-                                           fitness-fn
-                                           new-program-size)]
-    {:programs (concat fittest-old-programs fittest-new-programs)
-     :size population-size
-     :iteration (inc population-iteration)}))
+        fittest-old (take-fittest old-programs fitness-fn old-program-size)
+        fittest-new (take-fittest new-programs fitness-fn new-program-size)]
+    (create-population (concat fittest-old fittest-new)
+                       (inc population-iteration))))
 
 (defn pprint
   ([population]
@@ -55,10 +53,13 @@
   ([population writer]
      (pprint/pprint (mapv program/expression (population :programs)) writer)))
 
+(defn create-population-filename-pattern [filename-prefix]
+  (->> [filename-prefix '- "([0-9]+)" '.txt]
+       (apply str)
+       re-pattern))
+
 (defn load-population [filename-prefix]
-  (let [pattern (->> [filename-prefix '- "([0-9]+)" '.txt]
-                     (apply str)
-                     re-pattern)
+  (let [pattern (create-population-filename-pattern filename-prefix)
         get-info #(let [[filename i] (re-matches pattern (.getName %))]
                     {:file %
                      :matched-filename filename
@@ -73,16 +74,14 @@
                            last
                            :matched-iteration) ; TODO: resole NPE
         last-filename (-> files-info
-                           last
-                           :file ; TODO: resole NPE
-                           .getAbsolutePath)
+                          last
+                          :file ; TODO: resole NPE
+                          .getAbsolutePath)
         last-population (->> last-filename
                              slurp
                              read-string
                              (map program/create-program))]
-    {:programs last-population
-     :size (count last-population)
-     :iteration last-iteration}))
+    (create-population last-population last-iteration)))
 
 (defn load-or-create [filename-prefix size]
   (try

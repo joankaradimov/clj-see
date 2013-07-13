@@ -9,7 +9,11 @@
            {:programs [(program/create-program 0)
                        (program/create-program 0)]
             :size 2
-            :iteration 0}))))
+            :iteration 0}))
+    (is (= (create-population [(program/create-program 42)] 8)
+           {:programs [(program/create-program 42)]
+            :size 1
+            :iteration 8}))))
 
 (deftest test-form-pairs
   (testing "Split population into pairs"
@@ -28,6 +32,13 @@
   (testing "Keeps only part of the population"
     (is (= (take-fittest [1 1 1 1] identity 2)
            [1 1]))))
+
+(deftest test-create-population-filename-pattern
+  (testing "Population filename pattern can be created"
+    ; TODO: make this test black-box-style, maybe
+    (is (= "prefix-([0-9]+).txt" (-> "prefix"
+                                    create-population-filename-pattern
+                                    str)))))
 
 ;(deftest test-serialization
 ;  (testing "Serializing and deserializing preserves a population"
