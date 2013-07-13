@@ -65,33 +65,32 @@
         [matched-filename matched-i] (re-matches filename-pattern filename)]
     {:absolute-path (.getAbsolutePath file)
      :matched-filename matched-filename
-     :matched-iteration (if (nil? matched-i) nil (read-string matched-i))}))
+     :matched-iteration (if matched-i (read-string matched-i))}))
 
 (defn load-population [filename-prefix]
-  (let [last-file-info (->> "."
-                            clojure.java.io/file
-                            file-seq
-                            (map #(file->file-info % filename-prefix))
-                            (filter :matched-filename)
-                            (apply max-key :matched-iteration))
-        last-iteration (last-file-info :matched-iteration) ; TODO: resolve NPE
-        last-population (->> last-file-info
-                             :absolute-path ; TODO: resolve NPE
-                             slurp
-                             read-string
-                             (map program/create-program))]
-    (create-population last-population last-iteration)))
+  (let [files-info (->> "."
+                        clojure.java.io/file
+                        file-seq
+                        (map #(file->file-info % filename-prefix))
+                        (filter :matched-filename))
+        last-file-info (if (seq files-info)
+                         (apply max-key :matched-iteration files-info))]
+    (if last-file-info
+      (let [last-iteration (last-file-info :matched-iteration)
+            last-population (->> last-file-info
+                                 :absolute-path
+                                 slurp
+                                 read-string
+                                 (map program/create-program))]
+        (create-population last-population last-iteration)))))
 
 (defn load-or-create [filename-prefix size]
-  (try
-    (let [population (load-population filename-prefix)]
-      (println "Loaded population from file (iteration"
-               (population :iteration)
-               ")")
-      population)
-    (catch Exception e
-      (println "Created a new population")
-      (create-population size))))
+  (if-let [population (load-population filename-prefix)]
+    (do (println "Loaded population from file - iteration"
+                 (population :iteration))
+        population)
+    (do (println "Created a new population")
+        (create-population size))))
 
 (defn dump-population [filename-prefix population]
   (let [iteration (population :iteration)
