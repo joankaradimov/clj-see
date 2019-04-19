@@ -1,11 +1,8 @@
 (ns examples.circle-area
-  (:require [clojure.math.numeric-tower :refer [expt]]))
+  (:require [clojure.math.numeric-tower :refer [abs expt]]))
 
 (defn circle-area [radius]
   (* radius radius Math/PI))
-
-(defn abs [x]
-  (if (neg? x) (- x) x))
 
 (defn sqr [x]
   (* x x))
