@@ -7,16 +7,16 @@
   (random-path [this]))
 
 (deftype Program [expression
-                  ^:unsynchronized-mutable all-paths
-                  ^:unsynchronized-mutable func]
+                  ^:unsynchronized-mutable all-paths-cache
+                  ^:unsynchronized-mutable func-cache]
   IProgram
 
   (expression [this] expression)
 
   (random-path [this]
-    (if (nil? all-paths)
-      (set! all-paths (util/all-paths expression)))
-    (rand-nth all-paths))
+    (if (nil? all-paths-cache)
+      (set! all-paths-cache (util/all-paths expression)))
+    (rand-nth all-paths-cache))
 
   clojure.lang.IFn
 
@@ -32,9 +32,9 @@
   (invoke [this a1 a2 a3 a4 a5 a6] (apply this [a1 a2 a3 a4 a5 a6]))
 
   (applyTo [this args]
-    (if (nil? func)
-      (set! func (eval `(fn [& ~'args] ~expression))))
-    (apply func args))
+    (if (nil? func-cache)
+      (set! func-cache (eval `(fn [& ~'args] ~expression))))
+    (apply func-cache args))
 
   (equals [this other]
     (= expression (. other expression))))
