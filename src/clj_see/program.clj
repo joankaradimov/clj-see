@@ -3,6 +3,7 @@
             [clj-see.expression :as expression]))
 
 (defprotocol IProgram
+  (all-paths [this])
   (expression [this])
   (random-path [this]))
 
@@ -11,12 +12,15 @@
                   ^:unsynchronized-mutable func-cache]
   IProgram
 
+  (all-paths [this]
+    (if (nil? all-paths-cache)
+      (set! all-paths-cache (util/all-paths expression)))
+    all-paths-cache)
+
   (expression [this] expression)
 
   (random-path [this]
-    (if (nil? all-paths-cache)
-      (set! all-paths-cache (util/all-paths expression)))
-    (rand-nth all-paths-cache))
+    (rand-nth (all-paths this)))
 
   clojure.lang.IFn
 
