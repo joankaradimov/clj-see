@@ -7,6 +7,9 @@
 (defn sqr [x]
   (* x x))
 
+(defn sigmoid [x]
+  (/ 1 (+ (expt Math/E (- x)))))
+
 (defn fitness [program]
   (let [diff-fn #(abs (- (circle-area %) (program %)))
         differences (map diff-fn (range 10))]
