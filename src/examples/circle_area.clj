@@ -8,7 +8,7 @@
   (* x x))
 
 (defn sigmoid [x]
-  (/ 1 (+ (expt Math/E (- x)))))
+  (/ 1 (+ 1 (expt Math/E (- x)))))
 
 (defn fitness [program]
   (let [diff-fn #(abs (- (circle-area %) (program %)))
