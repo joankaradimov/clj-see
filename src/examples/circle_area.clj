@@ -1,4 +1,5 @@
 (ns examples.circle-area
+  (:require [clj-see.program :as program])
   (:require [clojure.math.numeric-tower :refer [abs expt]]))
 
 (defn circle-area [radius]
@@ -11,9 +12,12 @@
   (/ 1 (+ 1 (expt Math/E (- x)))))
 
 (defn fitness [program]
-  (let [diff-fn #(abs (- (circle-area %) (program %)))
+  (let [program-size (count (program/all-paths program))
+        diff-fn #(abs (- (circle-area %) (program %)))
         differences (map diff-fn (range 10))]
-    (- (apply + (map sqr differences)))))
+    (*
+      (sigmoid program-size)
+      (- (apply + (map sqr differences))))))
 
 (defmacro r [] `(first ~'args))
 
