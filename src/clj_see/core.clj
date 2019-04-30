@@ -2,7 +2,7 @@
   (:require [clj-see.population :as population]
             [examples.circle-area]))
 
-(def filename-prefix "circle-area")
+(def filename-prefix "examples-output/circle-area/iter")
 
 (defn -main []
   (let [next-gen population/next-generation

@@ -1,6 +1,7 @@
 (ns clj-see.population
   (:require [clojure.java.io :as io]
             [clojure.pprint :as pprint]
+            [me.raynes.fs :as fs]
             [clj-see.util :as util]
             [clj-see.program :as program]))
 
@@ -95,6 +96,7 @@
 (defn dump-population [filename-prefix population]
   (let [iteration (population :iteration)
         filename (str filename-prefix '- iteration '.txt)]
+    (fs/mkdirs (fs/parent filename))
     (with-open [w (io/writer filename)]
       (pprint population w))))
 
