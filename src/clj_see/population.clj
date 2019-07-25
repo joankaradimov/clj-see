@@ -40,13 +40,15 @@
   (let [population-size (population :size)
         population-iteration (population :iteration)
         old-programs (population :programs)
+        old-programs-set (set old-programs)
         new-programs-size (* population-size (- 1 elitism-factor))
         new-programs (->> old-programs
                           shuffle
                           form-pairs
                           (pmap #(apply program/crossover %))
                           util/flatten-1
-                          (pmap #(program/mutate % mutate-fn)))
+                          (pmap #(program/mutate % mutate-fn))
+                          (remove #(contains? old-programs-set %)))
         fittest-new (take-fittest new-programs fitness-fn new-programs-size)
         old-programs-size (- population-size (count fittest-new))
         fittest-old (take-fittest old-programs fitness-fn old-programs-size)]
