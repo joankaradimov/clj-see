@@ -26,6 +26,7 @@
                   (fn [_] (if (> (count _) 1) (rand-nth (rest _)) _))
                   (fn [_] (if (> (count _) 1) (rand-nth (rest _)) _))
                   (fn [_] (if (> (count _) 1) (rand-nth (rest _)) _))
+                  (fn [_] (try (eval _) (catch Exception e _)))
                   (fn [_] `(+ ~_ 0))
                   (fn [_] `(* ~_ 1))]
    :terminal [(fn [_] (expt 2 (/ 1 (rand))))
