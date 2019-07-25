@@ -11,6 +11,12 @@
   (testing "Mutate function can be called for programs"
     (mutate (create-program '(+ a b)) identity)))
 
+(deftest test-equals
+  (testing "Programs can be tested for equality"
+    (is (= (create-program '(+ a (* 2 (- b c)))) (create-program '(+ a (* 2 (- b c))))))
+    (is (= (create-program '(+ a b)) (create-program '(+ a b))))
+    (not (= (create-program '(+ a b)) (create-program '(+ a c))))))
+
 (deftest test-ifn-implementation
   (testing "Programs can be invoked"
     (is (= ((create-program '(+ (first args) (second args))) 40 2)
