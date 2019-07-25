@@ -40,6 +40,9 @@
       (set! func-cache (eval `(fn [& ~'args] ~expression))))
     (apply func-cache args))
 
+  (hashCode [this]
+    (hash (if (seq? expression) (first expression) expression)))
+
   (equals [this other]
     (= expression (. other expression))))
 

@@ -17,6 +17,11 @@
     (is (= (create-program '(+ a b)) (create-program '(+ a b))))
     (not (= (create-program '(+ a b)) (create-program '(+ a c))))))
 
+(deftest test-set-operations
+  (testing "Programs can be members of a set"
+    (is (contains? #{(create-program '(+ a b))} (create-program '(+ a b))))
+    (not (contains? #{(create-program '(+ a b))} (create-program '(+ a c))))))
+
 (deftest test-ifn-implementation
   (testing "Programs can be invoked"
     (is (= ((create-program '(+ (first args) (second args))) 40 2)
