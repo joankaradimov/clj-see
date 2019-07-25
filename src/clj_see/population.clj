@@ -39,17 +39,17 @@
 (defn next-generation [population fitness-fn mutate-fn elitism-factor]
   (let [population-size (population :size)
         population-iteration (population :iteration)
-        old-program-size (* elitism-factor population-size)
-        new-program-size (- population-size old-program-size)
         old-programs (population :programs)
+        new-programs-size (* population-size (- 1 elitism-factor))
         new-programs (->> old-programs
                           shuffle
                           form-pairs
                           (pmap #(apply program/crossover %))
                           util/flatten-1
                           (pmap #(program/mutate % mutate-fn)))
-        fittest-old (take-fittest old-programs fitness-fn old-program-size)
-        fittest-new (take-fittest new-programs fitness-fn new-program-size)]
+        fittest-new (take-fittest new-programs fitness-fn new-programs-size)
+        old-programs-size (- population-size (count fittest-new))
+        fittest-old (take-fittest old-programs fitness-fn old-programs-size)]
     (create-population (concat fittest-old fittest-new)
                        (inc population-iteration))))
 
