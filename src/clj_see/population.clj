@@ -5,6 +5,9 @@
             [clj-see.util :as util]
             [clj-see.program :as program]))
 
+(defn nan? [number]
+  (Double/isNaN number))
+
 (defn create-population
   ([size]
      (create-population (->> 0 (repeat size) (map program/create-program)) 0))
@@ -28,6 +31,7 @@
 (defn take-fittest [programs fitness-function count]
   (->> programs
        (pmap (fn [p] [(fitness-function p) p]))
+       (remove (fn [program-with-fitness] (nan? (first program-with-fitness))))
        (sort-by first >)
        (pmap second)
        (take count)))
