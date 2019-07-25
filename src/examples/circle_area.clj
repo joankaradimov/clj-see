@@ -11,6 +11,7 @@
 (defn sigmoid [x]
   (/ 1 (+ 1 (expt Math/E (- x)))))
 
+; TODO: fitness can be cached, probably
 (defn fitness [program]
   (let [program-size (count (program/all-paths program))
         diff-fn #(abs (- (circle-area %) (program %)))

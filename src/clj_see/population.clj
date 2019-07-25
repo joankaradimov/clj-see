@@ -27,7 +27,6 @@
                 (conj result-accumulator [first-program second-program]))
          (reverse result-accumulator)))))
 
-; TODO: fitness can be cached, probably
 (defn take-fittest [programs fitness-function count]
   (->> programs
        (pmap (fn [p] [(fitness-function p) p]))
