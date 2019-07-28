@@ -29,7 +29,13 @@
                   (fn [_] (if (> (count _) 1) (rand-nth (rest _)) _))
                   (fn [_] (try (eval _) (catch Exception e _)))
                   (fn [_] `(+ ~_ 0))
-                  (fn [_] `(* ~_ 1))]
+                  (fn [_] `(- 0 ~_))
+                  (fn [_] `(* ~_ 1))
+                  (fn [_] `(Math/pow ~_ -1))
+                  (fn [_] `(Math/cbrt ~_))
+                  (fn [_] `(Math/exp ~_))
+                  (fn [_] `(Math/log ~_))
+                  (fn [_] `(Math/sqrt ~_))]
    :terminal [(fn [_] (expt 2 (/ 1 (rand))))
               (fn [_] (expt 2 (/ 1 (rand))))
               (fn [_] (rand))
