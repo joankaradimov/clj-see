@@ -6,10 +6,10 @@
 
 (defn -main []
   (let [next-gen population/next-generation
-        initial-population (population/load-or-create filename-prefix 100)
+        initial-population (population/load-or-create filename-prefix 1000)
         persisting-agent (population/create-persisting-agent 0)]
     (loop [population initial-population]
-      (if (< (population :iteration) 240)
+      (if (< (population :iteration) 2500)
         (let [new-population (next-gen population
                                        examples.circle-area/fitness
                                        examples.circle-area/mutate-fn
