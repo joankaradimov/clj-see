@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [me.raynes/fs "1.4.6"]]
+  :source-paths ["src/clojure"]
   :main clj-see.core)
