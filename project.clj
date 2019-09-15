@@ -7,4 +7,5 @@
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [me.raynes/fs "1.4.6"]]
   :source-paths ["src/clojure"]
+  :java-source-paths ["src/java"]
   :main clj-see.core)
