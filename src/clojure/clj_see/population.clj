@@ -61,20 +61,20 @@
      (pprint/pprint (mapv program/expression (population :programs)) writer)))
 
 (defn create-population-filename-pattern [filename-prefix]
-  (->> [filename-prefix '- "([0-9]+)" '.txt]
+  (->> [".*" (java.util.regex.Matcher/quoteReplacement filename-prefix) '- "([0-9]+)" '.txt]
        (apply str)
        re-pattern))
 
 (defn file->file-info [file filename-prefix]
   (let [filename-pattern (create-population-filename-pattern filename-prefix)
-        filename (.getName file)
+        filename (.getAbsolutePath file)
         [matched-filename matched-i] (re-matches filename-pattern filename)]
-    {:absolute-path (.getAbsolutePath file)
+    {:absolute-path filename
      :matched-filename matched-filename
      :matched-iteration (if matched-i (read-string matched-i))}))
 
 (defn load-population [filename-prefix]
-  (let [files-info (->> "."
+  (let [files-info (->> (fs/parent filename-prefix)
                         clojure.java.io/file
                         file-seq
                         (map #(file->file-info % filename-prefix))

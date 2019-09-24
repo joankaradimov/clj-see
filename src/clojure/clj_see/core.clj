@@ -2,7 +2,8 @@
   (:require [clj-see.population :as population]
             [examples.circle-area]))
 
-(def filename-prefix "examples-output/circle-area/iter")
+(def filename-prefix (clojure.string/join java.io.File/separator
+                                          ["examples-output" "circle-area" "iter"]))
 
 (defn -main []
   (let [next-gen population/next-generation
