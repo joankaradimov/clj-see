@@ -100,10 +100,12 @@
 
 (defn dump-population [filename-prefix population]
   (let [iteration (population :iteration)
+        temp-filename (str filename-prefix '- iteration '.tmp)
         filename (str filename-prefix '- iteration '.txt)]
     (fs/mkdirs (fs/parent filename))
-    (with-open [w (io/writer filename)]
-      (pprint population w))))
+    (with-open [w (io/writer temp-filename)]
+      (pprint population w))
+    (fs/rename temp-filename filename)))
 
 (defn create-persisting-agent [index]
   (agent index))
