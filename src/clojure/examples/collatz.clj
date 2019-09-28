@@ -14,7 +14,7 @@
         differences (map diff-fn (range 10))]
     (* program-size (- (apply + (map sqr differences))))))
 
-(defmacro r [] `(first ~'args))
+(defmacro arg [] `(first ~'args))
 
 (def all-mutations
   {:non-terminal [(fn [_] (if (> (count _) 1) (rand-nth (rest _)) _))
@@ -38,7 +38,7 @@
               (fn [_] (expt 2 (/ 1 (rand))))
               (fn [_] (rand))
               (fn [_] (rand))
-              (fn [_] `(r))
+              (fn [_] `(arg))
               (fn [_] `(+ ~_ 0))
               (fn [_] `(* ~_ 1))]})
 
