@@ -26,6 +26,8 @@
                   (fn [_] `(- 0 ~_))
                   (fn [_] `(* ~_ 1))
                   (fn [_] `(relu ~_))
+                  (fn [_] `(Math/sin ~_))
+                  (fn [_] `(Math/cos ~_))
                   (fn [_] `(Math/floor ~_))
                   (fn [_] `(Math/floor ~_))
                   (fn [_] `(Math/ceil ~_))
