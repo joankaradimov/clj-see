@@ -8,4 +8,5 @@
                  [me.raynes/fs "1.4.6"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
+  :aot :all
   :main clj-see.core)
