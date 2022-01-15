@@ -1,4 +1,4 @@
-(ns clj-see.core-test
+(ns clj-see.util-test
   (:require [clojure.test :refer :all]
             [clj-see.util :refer :all]))
 
