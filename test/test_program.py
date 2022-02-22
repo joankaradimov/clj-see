@@ -30,7 +30,7 @@ class TestProgram(unittest.TestCase):
         self.assertEqual(Program('x').crossover(Program('y')), (Program('y'), Program('x')))
 
     def test_mutate_can_be_called(self):
-        self.assertEqual(Program(('+', 1, 2)).mutate([], lambda x: x), Program(('+', 1, 2)))
+        self.assertEqual(Program(('+', 1, 2)).mutate(lambda x: x), Program(('+', 1, 2)))
 
     def test_set_membership(self):
         self.assertIn(Program(('+', 1, 2)), {Program(('+', 1, 2))})

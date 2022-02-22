@@ -40,7 +40,7 @@ class Program:
 
         return Program(e1), Program(e2)
 
-    def mutate(self, path, mutation_function):
+    def mutate(self, mutation_function):
         path = self.random_path()
         new_expression = mutate(self.expression, path, mutation_function)
 
