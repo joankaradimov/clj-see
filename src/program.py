@@ -13,7 +13,7 @@ def eval_expression(expression):
         return expression
 
 class Program:
-    def __init__(self, expression):
+    def __init__(self, expression = None):
         self.expression = expression
 
     def __hash__(self):
