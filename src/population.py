@@ -5,8 +5,8 @@ from src.program import *
 
 class Population:
     def __init__(self, programs = [], generation = 0):
-        self.programs = programs
-        self.size = len(programs)
+        self.programs = set(programs)
+        self.size = len(self.programs)
         self.generation = generation
 
     def __repr__(self):
