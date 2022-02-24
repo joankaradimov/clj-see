@@ -3,12 +3,12 @@ from random import choice
 
 from src.expression import *
 
-def eval_expression(expression):
-    if not isinstance(expression, tuple):
-        return expression
-    elif callable(expression[0]):
+def eval_expression(expression, **kwargs):
+    if isinstance(expression, tuple):
         first, *remaning = expression
-        return first(*[eval_expression(x) for x in remaning])
+        return first(*[eval_expression(x, **kwargs) for x in remaning])
+    elif isinstance(expression, str):
+        return kwargs[expression]
     else:
         return expression
 
@@ -25,8 +25,8 @@ class Program:
     def __repr__(self):
         return f'Program({repr(self.expression)})'
 
-    def __call__(self):
-        return eval_expression(self.expression)
+    def __call__(self, **kwargs):
+        return eval_expression(self.expression, **kwargs)
 
     @cached_property
     def all_paths(self):
