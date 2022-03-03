@@ -11,6 +11,7 @@ def fitness(program):
     return program_size * sum(diff_function(float(i)) ** 2 for i in range(10))
 
 non_terminal = [
+    lambda e: random.choice(e[1:]),
     lambda e: (float.__add__, e, 0.0),
     lambda e: (float.__sub__, 0.0, e),
     lambda e: (float.__mul__, 1.0, e),
@@ -20,6 +21,8 @@ non_terminal = [
 ]
 
 terminal = [
+    lambda e: random.random(),
+    lambda e: random.random(),
     lambda e: random.random(),
     lambda e: 'r',
     lambda e: (float.__add__, e, 0.0),
