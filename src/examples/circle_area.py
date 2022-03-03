@@ -8,7 +8,7 @@ def fitness(program):
     program_size = len(program.all_paths)
     diff_function = lambda r: circle_area(r) - program(r=r)
 
-    return program_size * sum(diff_function(float(i)) ** 2 for i in range(10))
+    return (program_size + 1) * sum(diff_function(float(i)) ** 2 for i in range(10))
 
 non_terminal = [
     lambda e: random.choice(e[1:]),
