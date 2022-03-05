@@ -17,6 +17,9 @@ def try_eval(expression):
         return expression
 
 non_terminal = [
+    lambda e: e,
+    lambda e: random.choice(e[1:]),
+    lambda e: random.choice(e[1:]),
     lambda e: random.choice(e[1:]),
     lambda e: try_eval(e),
     lambda e: (float.__add__, e, 0.0),
@@ -28,6 +31,7 @@ non_terminal = [
 ]
 
 terminal = [
+    lambda e: e,
     lambda e: random.random(),
     lambda e: random.random(),
     lambda e: random.random(),
