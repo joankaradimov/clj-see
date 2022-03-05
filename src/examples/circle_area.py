@@ -10,8 +10,15 @@ def fitness(program):
 
     return math.log(program_size + 1) * sum(diff_function(float(i)) ** 2 for i in range(30))
 
+def try_eval(expression):
+    try:
+        return expression()
+    except:
+        return expression
+
 non_terminal = [
     lambda e: random.choice(e[1:]),
+    lambda e: try_eval(e),
     lambda e: (float.__add__, e, 0.0),
     lambda e: (float.__sub__, 0.0, e),
     lambda e: (float.__mul__, 1.0, e),
