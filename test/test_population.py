@@ -4,8 +4,8 @@ from src.population import *
 
 class TestPopulation(unittest.TestCase):
     def test_representation(self):
-        self.assertEqual(repr(Population([Program(42), Program(('+', 2, 1))], 10)),
-                         "Population([Program(42), Program(('+', 2, 1))], generation=10)")
+        self.assertEqual(repr(Population([Program(42), Program(('+', 2, 1))], size=5, generation=10)),
+                         "Population({Program(42), Program(('+', 2, 1))}, size=5, generation=10)")
 
     def test_pair_forming_uses_programs_correctly(self):
         programs = [
@@ -39,6 +39,12 @@ class TestPopulation(unittest.TestCase):
         new_population = population.next_generation(lambda _: 1, lambda x: x, 0.5)
 
         self.assertEqual(new_population.generation, 1)
+
+    def test_next_generation_size_is_enforced(self):
+        population = Population([Program(1), Program(2)], size = 3)
+        new_population = population.next_generation(lambda x: x.expression, lambda x: x + 1, 0.5)
+
+        self.assertEqual(new_population.programs, {Program(1), Program(2), Program(3)})
 
 if __name__ == '__main__':
     unittest.main()
